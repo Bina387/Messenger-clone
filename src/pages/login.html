@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Login to Messenger Clone">
+  <meta name="theme-color" content="#0084ff">
+  
+  <title>Login - Messenger Clone</title>
+  
+  <link rel="stylesheet" href="/src/css/style.css">
+  <style>
+    .auth-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0084ff 0%, #0073e6 100%);
+      padding: 16px;
+    }
+    
+    .auth-card {
+      width: 100%;
+      max-width: 400px;
+      background: white;
+      border-radius: 12px;
+      padding: 32px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    body.dark-mode .auth-card {
+      background: var(--dark-surface);
+    }
+    
+    .auth-card h1 {
+      color: #0084ff;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+    
+    .auth-card p {
+      text-align: center;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--text);
+    }
+    
+    .form-group input {
+      width: 100%;
+    }
+    
+    .btn-login {
+      width: 100%;
+      margin-top: 16px;
+    }
+    
+    .auth-link {
+      text-align: center;
+      margin-top: 16px;
+      color: var(--text-secondary);
+    }
+    
+    .auth-link a {
+      color: #0084ff;
+      font-weight: 500;
+    }
+    
+    .error-message {
+      color: var(--danger);
+      font-size: 14px;
+      margin-bottom: 16px;
+      padding: 8px 12px;
+      background-color: rgba(240, 40, 73, 0.1);
+      border-radius: 8px;
+      border-left: 3px solid var(--danger);
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <div class="auth-card">
+      <h1>Messenger</h1>
+      <p>Real-time Chat Application</p>
+      
+      <form id="login-form">
+        <div id="error-message" class="error-message" style="display: none;"></div>
+        
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            placeholder="you@example.com"
+            required
+          >
+        </div>
+        
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="••••••••"
+            required
+          >
+        </div>
+        
+        <button type="submit" class="btn btn-primary btn-login">
+          <span id="btn-text">Sign In</span>
+          <span id="btn-loader" class="loader" style="display: none; width: 16px; height: 16px;"></span>
+        </button>
+      </form>
+      
+      <div class="auth-link">
+        Don't have an account? <a href="/signup.html">Create one</a>
+      </div>
+      
+      <div class="auth-link">
+        <a href="/forgot-password.html">Forgot password?</a>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { login } from '/src/js/auth.js';
+    import { showNotification } from '/src/js/utils.js';
+    
+    const form = document.getElementById('login-form');
+    const errorMessage = document.getElementById('error-message');
+    const btnText = document.getElementById('btn-text');
+    const btnLoader = document.getElementById('btn-loader');
+    
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      // Show loading state
+      btnText.style.display = 'none';
+      btnLoader.style.display = 'inline-block';
+      
+      try {
+        await login(email, password);
+        showNotification('✅ Logged in successfully!', 'success');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 1000);
+      } catch (error) {
+        errorMessage.textContent = error.message || 'Login failed';
+        errorMessage.style.display = 'block';
+        showNotification(error.message, 'error');
+      } finally {
+        btnText.style.display = 'inline';
+        btnLoader.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
